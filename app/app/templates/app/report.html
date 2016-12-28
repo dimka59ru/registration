@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!-- Template by quackit.com -->
+{% load static %}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;  charset=utf-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Отчет - Регистрация проектов</title>
+
+</head>
+
+<body>
+<div class="wrapper">
+
+    <div class="left"><a href="/">&larr; На главную
+    </a> {{ date_today }}
+    </div>
+    <div class="right">
+        <button id="printBtn" class="button" onclick="javascript: print();">Распечатать</button>
+    </div>
+    <div class="clear"></div>
+    <div class="space"></div>
+
+    <table class="devices" id="report">
+        <tr>
+            <th>Оборудование</th>
+            <th>Актуальные</th>
+            <th>Неактуальные</th>
+            <th>Реализованные</th>
+            <th>Срок истек</th>
+            <th>Всего</th>
+        </tr>
+        {% for device in device_list %}
+        <tr class="hover">
+            <td>{{ device.device_name }}</td>
+            <td>
+                {% for key, value in actual_projects.items %}
+                    {% if key == device.device_name %}
+                        {{ value }}
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                {% for key, value in not_actual_projects.items %}
+                    {% if key == device.device_name %}
+                        {{ value }}
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                {% for key, value in implemented_projects.items %}
+                    {% if key == device.device_name %}
+                        {{ value }}
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                 {% for key, value in outdated_projects.items %}
+                    {% if key == device.device_name %}
+                        {{ value }}
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                {% for key, value in all_projects.items %}
+                    {% if key == device.device_name %}
+                        {{ value }}
+                    {% endif %}
+                {% endfor %}
+
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+
+
+
+
+</div>
+</body>
+</html>

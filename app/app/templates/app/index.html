@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!-- Template by quackit.com -->
+{% load static %}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;  charset=utf-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Регистрация проектов</title>
+</head>
+
+<body>
+<main>
+
+    <div class="innertube">
+        {% if messages %}
+        <ul class="flash">
+            {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if project_list %}
+        <table class="projects">
+            <tr>
+                <th>Номер</th>
+
+                <th>Добавлен</th>
+                <th>Окончание</th>
+                <th>Срок реализации</th>
+                <th>Контрагент</th>
+                <th>Конечный заказчик</th>
+                <th>E-mail</th>
+                <th>Контакты</th>
+                <th width="220">
+                    <p>Оборудование</p>
+                    <div class="left"><p>модель</p></div>
+                    <div class="right"><p>кол-во</p></div>
+                    <div class="clear"></div>
+                </th>
+                <th>Файл</th>
+                <th>Примечание</th>
+            </tr>
+            {% for project in project_list %}
+            <tr class="
+                    {% if project.status == 3 %}yellow
+                    {% elif project.status == 2 %}green
+                    {% elif project.status == 1 %}gray
+                    {% elif project.status == 4 %}red
+                    {% endif %} hover">
+                <td style="text-align:center"><a href="{% url 'app:edit' project.id %}">{{ project.id }}</a></td>
+                <td style="text-align:center">{{ project.add_date|date:"d.m.Y" }}</td>
+                <td style="text-align:center">{{ project.end_date|date:"d.m.Y" }}</td>
+                <td>{{ project.realization }}</td>
+                <td>{{ project.partner }}</td>
+                <td>{{ project.end_customer }}</td>
+                <td><a href="mailto:{{ project.email }}">{{ project.email }}</a></td>
+                <td>{{ project.contacts }}</td>
+                <td>
+                    {% if device_list %}
+                    {% for device in device_list %}
+
+                    {% if device.id_project.id == project.id %}
+                    <div class="border_bottom">
+                        <p class="left">{{ device.device_name }}</p>
+                        <p class="right">{{ device.sum }}</p>
+                        <div class="clear"></div>
+                    </div>
+
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                </td>
+                <td><a href="{% get_media_prefix %}{{ project.file }}" target="_blank">Скачать</a></td>
+                <td>{{ project.note }}</td>
+            </tr>
+
+
+            {% endfor %}
+        </table>
+
+        {% else %}
+        <p class="flash">Нет проектов :(</p>
+        {% endif %}
+    </div>
+</main>
+<nav id="nav">
+    <div class="innertube">
+        <p><a href="{% url 'app:add' %}">Добавить проект</a></p>
+
+        <table class="sort">
+            <tr class="yellow">
+                <td><a href="/3">Актуальные проекты</a></td>
+                <td>{{stat.actual}}</td>
+            </tr>
+            <tr class="green">
+                <td><a href="/2">Реализованные проекты</a></td>
+                <td>{{stat.implemented}}</td>
+            </tr>
+            <tr class="red">
+                <td><a href="/4">Срок регистрации истек</a></td>
+                <td>{{stat.outdated}}</td>
+            <tr class="gray">
+                <td><a href="/1">Неактуальные</a></td>
+                <td>{{stat.notactual}}</td>
+            </tr>
+            <tr>
+                <td><a href="/">Все</a></td>
+                <td>{{stat.all}}</td>
+            </tr>
+        </table>
+        <div class="space"></div>
+        <form action="/search/" method="get" class="search_form">
+            <p>Название:<input type="text" name="q" value="{{ q }}"></p>
+            <p>от <input type="number" name="gt" value="{{ gt }}">
+                до <input type="number" name="lt" value="{{ lt }}"></p>
+            <p class="right"><input type="submit" value="Искать"></p>
+            <div class="clear"></div>
+        </form>
+        <div class="space"></div>
+        <p><a href="{% url 'app:report' %}">Отчет</a></p>
+    </div>
+</nav>
+
+</body>
+</html>

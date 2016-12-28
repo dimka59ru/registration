@@ -20,18 +20,18 @@ MAINTAINER Dockerfiles
 
 RUN apt-get update && apt-get install -y \
 	git \
-	python \
-	python-dev \
-	python-setuptools \
+	python3 \
+	python3-dev \
+	python3-setuptools \
 	nginx \
 	supervisor \
 	sqlite3 \
   && rm -rf /var/lib/apt/lists/*
 
-RUN easy_install pip
+RUN easy_install3 pip
 
 # install uwsgi now because it takes a little while
-RUN pip install uwsgi
+RUN pip3 install uwsgi
 
 # setup all the configfiles
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
@@ -42,15 +42,16 @@ COPY supervisor-app.conf /etc/supervisor/conf.d/
 # to prevent re-installinig (all your) dependencies when you made a change a line or two in your app. 
 
 COPY app/requirements.txt /home/docker/code/app/
-RUN pip install -r /home/docker/code/app/requirements.txt
+RUN pip3 install -r /home/docker/code/app/requirements.txt
 
 # add (the rest of) our code
 COPY . /home/docker/code/
 
 # install django, normally you would remove this step because your project would already
 # be installed in the code/app/ directory
-RUN django-admin.py startproject website /home/docker/code/app/ 
-
+#RUN django-admin.py startproject website /home/docker/code/app/ 
+#RUN python manage.py collectstatic
 
 EXPOSE 80
 CMD ["supervisord", "-n"]
+CMD ["ln", "-sf", "python3", "/usr/bin/python"]

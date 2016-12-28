@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!-- Template by quackit.com -->
+{% load static %}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;  charset=utf-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Изменить проект</title>
+
+</head>
+<body>
+
+
+<div class="wrapper">
+    <a href="/">&larr; На главную</a>
+   {% if messages %}
+    <ul class="flash">
+    {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+            {{ message }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+        {% if project %}
+        <form action="" method="post" class="add_project">
+        {% csrf_token %}
+            <div class="left">
+                <dl>
+                    <dt>E-mail:
+                    <dd><input type=email size=30 name=email value="{{ project.email }}" required>
+                    <dt>Контакты:
+                    <dd><textarea name=contacts rows=5 cols=52>{{ project.contacts }}</textarea>
+
+                    <dt>Примечание:
+                    <dd><textarea name=note rows=5 cols=52>{{ project.note }}</textarea>
+                </dl>
+
+            </div>
+
+            <div class="right">
+    <div class="legend">
+        <p><b>Статус:</b></p>
+        <p><input name="status" type="radio" value="" checked></p>
+        <p><input name="status" type="radio" value="3" >Актуальный</p>
+        <p><input name="status" type="radio" value="4">Продлить</p>
+        <p><input name="status" type="radio" value="2">Реализован</p>
+        <p><input name="status" type="radio" value="1">Неактуальный</p>
+    </div>
+
+
+</div>
+<div class="clear"></div>
+
+<div class="right">
+    <dd><input type=submit name="submit_edit" value="Отправить"></dd>
+</div>
+<div class="clear"></div>
+</form>
+
+
+{% endif %}
+
+</div>
+
+</body>
+</html>

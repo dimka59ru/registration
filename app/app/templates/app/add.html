@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- Template by quackit.com -->
+{% load static %}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;  charset=utf-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Регистрация проектов</title>
+
+</head>
+
+<body>
+
+
+<div class="wrapper">
+    <a href="{% url 'app:index' %}" >&larr; На главную</a>
+    {% if messages %}
+    <ul class="flash">
+    {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+            {{ message }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <form action="" method="post" class="add_project" enctype="multipart/form-data" >
+        {% csrf_token %}
+        <div class="left">{{ form.as_p }}</div>
+
+        <div class="right">
+            {% if device_list %}
+
+            <table class="devices">
+                <tr>
+                    <th width="80px">Выбрать</th>
+                    <th>Изделие</th>
+                    <th width="80px">Количество</th>
+                </tr>
+                {% for device in device_list %}
+                <tr class="hover">
+                    <td align="center">
+                        <input type="checkbox" name="checkbox" value="{{ device.device_name }}"/></td>
+                    <td style="">{{ device.device_name }}</td>
+                    <td align="center">
+                        <input type="number" size="1" name="{{ device.device_name }}_sum"/></td>
+                </tr>
+                {% endfor %}
+            </table>
+
+            {% endif %}
+
+            <input type="submit" value="Отправить"/>
+        </div>
+    </form>
+</div>
+</body>
+</html>
