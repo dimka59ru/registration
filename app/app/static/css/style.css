@@ -19,7 +19,7 @@ body{
     color: #333;
     line-height: 1.5em;
 
-    background: #2B2B2B;
+
 
 }
 @media print {
@@ -238,47 +238,7 @@ tr.red td {
 }
 
 
-/*
-.add-project      {
 
-    border: 1px solid #AACBE2;
-    background: #F6F6F6;
-    padding: 10px;
-}
-.add-project p { clear:both;}
-
-.add-project label {
-    width:140px;
-    margin-top: 5px;
-
-    display:inline-block;
-    float:left;
-    padding:3px;
-
-}
-
-.add-project input[type="text"], .add-project input[type="email"], .add-project input[type="file"] {
-
-    width:320px;
-    padding:2px 8px;
-    margin-top: 9px;
-}
-
-.add-project textarea {
-    width:334px;
-    height: 70px;
-    margin-top: 6px;
-}
-
-.add-project .left { border-right: 1px solid #aacbe2; padding-right: 10px;}
-.add-project dl   { font-weight: bold; }
-.add-project dd   { margin-bottom:5px; }
-
-.search .add-project input[type="number"] {
-    width: 23%;
-}
-
-*/
 input[type="radio"] {
     width: 20px;
 }
