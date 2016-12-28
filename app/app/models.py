@@ -1,6 +1,7 @@
 import os
 from datetime import date
 from uuid import uuid4
+from django.utils.deconstruct import deconstructible
 
 from django.db import models
 
@@ -18,14 +19,21 @@ def get_date_end():
     return date(new_year, new_month, date.today().day)
 
 
-def path_and_rename(path):
-    def wrapper(instance, filename):
+@deconstructible
+class PathAndRename(object):
+
+    def __init__(self, sub_path):
+        self.path = sub_path
+
+    def __call__(self, instance, filename):
         ext = filename.split('.')[-1]
-        # get filename
+        # set filename as random string
         filename = '{}.{}'.format(uuid4().hex, ext)
-        # return the whole path to the file
-        return os.path.join(path, filename)
-    return wrapper
+        # return the whole path to the file        
+        return os.path.join(self.path, filename)
+
+path_and_rename = PathAndRename("doc/")
+
 
 class Project(models.Model):
     status = models.IntegerField(default=3)
@@ -36,11 +44,15 @@ class Project(models.Model):
     end_customer = models.CharField(max_length=300)
     email = models.EmailField()
     contacts = models.TextField()
-    file = models.FileField(upload_to=path_and_rename('doc/'))
+    file = models.FileField(upload_to=path_and_rename)
     note = models.CharField(max_length=300, blank=True)
 
     class Meta:
         ordering = ['status', 'id']
+
+    def delete(self, *args, **kwargs):
+        self.file.delete(save=False)
+        super(Project, self).delete(*args, **kwargs)
 
 
 class Devices(models.Model):
