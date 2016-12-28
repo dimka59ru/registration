@@ -1,0 +1,3 @@
+app/app/migrations/*
+app/media/*
+*.pyc
