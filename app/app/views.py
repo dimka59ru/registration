@@ -40,8 +40,6 @@ def index(request):
             project.save()
             messages.add_message(request, settings.MY_SUPER_ERROR, 'Проект {} истек '.format(project.id))
 
-
-
     context = {'project_list': project_list, 'device_list': device_list, 'stat': count_project()}
     return render(request, 'app/index.html', context)
 
@@ -104,7 +102,6 @@ def edit(request, project_id):
             if request.POST['status']:
                 project.status = request.POST['status']
 
-
             if request.POST['status'] == '1':
                 messages.add_message(request, settings.MY_SUPER_ERROR, 'Больше не актуальный!  :(')
             elif request.POST['status'] == '2':
@@ -124,63 +121,53 @@ def edit(request, project_id):
 
         return render(request, 'app/edit.html', {'project': project})
 
-
     except Project.DoesNotExist:
         messages.add_message(request, settings.MY_SUPER_ERROR, 'Проект не найден!')
 
     return render(request, 'app/edit.html')
-    # return HttpResponse("You✬re looking at question {}.".format(project_id))
 
 
 def search(request):
-    device_list = ListDevices.objects.all()
+    dev = ''
+    partner = ''
+    consumer = ''
+    gt = None
+    lt = None
 
-    if 'q' in request.GET and request.GET['q']:
-        q = request.GET['q']
+    project_list = Project.objects.order_by('-status', '-id')
+    device_list = ListDevices.objects.order_by('device_name')
 
-        if 'gt' in request.GET and request.GET['gt'] and 'lt' not in request.GET:
-            gt = request.GET['gt']
-            project_list = Project.objects.order_by('-status', '-id').filter(
-                listdevices__device_name__icontains=q, listdevices__sum__gte=int(gt)).annotate(Count("pk"))
+    if 'dev' in request.GET and request.GET['dev']:
+        dev = request.GET['dev']
+        project_list = project_list.filter(
+            listdevices__device_name__icontains=dev).annotate(Count("pk"))
+    if ('gt' in request.GET and request.GET['gt']) and ('lt' in request.GET and not request.GET['lt']):
+        gt = request.GET['gt']
+        project_list = project_list.filter(
+            listdevices__sum__gte=int(gt)).annotate(Count("pk"))
 
-            context = {'project_list': project_list, 'device_list': device_list, 'stat': count_project(), 'q': q,
-                       'gt': gt}
+    elif ('lt' in request.GET and request.GET['lt']) and ('gt' in request.GET and not request.GET['gt']):
+        lt = request.GET['lt']
+        project_list = project_list.filter(
+            listdevices__sum__lte=int(lt)).annotate(Count("pk"))
 
-        elif 'lt' in request.GET and request.GET['lt'] and 'gt' not in request.GET:
-            lt = request.GET['lt']
-            project_list = Project.objects.order_by('-status', '-id').filter(
-                listdevices__device_name__icontains=q, listdevices__sum__lte=int(lt)).annotate(Count("pk"))
+    elif 'lt' in request.GET and request.GET['lt'] and 'gt' in request.GET and request.GET['gt']:
+        lt = request.GET['lt']
+        gt = request.GET['gt']
+        project_list = project_list.filter(
+            listdevices__sum__lte=int(lt),
+            listdevices__sum__gte=int(gt)).annotate(Count("pk"))
 
-            context = {'project_list': project_list, 'device_list': device_list, 'stat': count_project(), 'q': q,
-                       'lt': lt}
+    if 'partner' in request.GET and request.GET['partner']:
+        partner = request.GET['partner']
+        project_list = project_list.filter(partner__icontains=partner)
 
-        elif 'lt' in request.GET and request.GET['lt'] and 'gt' in request.GET and request.GET['gt']:
-            lt = request.GET['lt']
-            gt = request.GET['gt']
-            project_list = Project.objects.order_by('-status', '-id').filter(
-                listdevices__device_name__icontains=q, listdevices__sum__lte=int(lt),
-                listdevices__sum__gte=int(gt)).annotate(Count("pk"))
+    if 'consumer' in request.GET and request.GET['consumer']:
+        consumer = request.GET['consumer']
+        project_list = project_list.filter(end_customer__icontains=consumer)
 
-            context = {'project_list': project_list, 'device_list': device_list, 'stat': count_project(), 'q': q,
-                       'gt': gt, 'lt': lt}
-
-        else:
-
-            project_list = Project.objects.order_by('-status', '-id').filter(
-                listdevices__device_name__icontains=q).annotate(Count("pk"))
-
-            context = {'project_list': project_list, 'device_list': device_list, 'stat': count_project(), 'q': q}
-
-        return render(request, 'app/index.html', context)
-
-    else:
-
-        messages.add_message(request, settings.MY_SUPER_ERROR, 'Не указано оборудование!')
-
-        project_list = Project.objects.order_by('-status', '-id')
-        device_list = ListDevices.objects.order_by('device_name')
-        context = {'project_list': project_list, 'device_list': device_list, 'stat': count_project()}
-
+    context = {'project_list': project_list, 'device_list': device_list, 'stat': count_project(),
+               'dev': dev, 'partner': partner, 'consumer': consumer, 'gt': gt, 'lt': lt}
     return render(request, 'app/index.html', context)
 
 

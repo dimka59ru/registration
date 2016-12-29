@@ -114,9 +114,11 @@
         </table>
         <div class="space"></div>
         <form action="/search/" method="get" class="search_form">
-            <p>Название:<input type="text" name="q" value="{{ q }}"></p>
+            <p>Оборудование:<input type="text" name="dev" value="{{ dev }}"></p>
             <p>от <input type="number" name="gt" value="{{ gt }}">
                 до <input type="number" name="lt" value="{{ lt }}"></p>
+            <p>Контрагент:<input type="text" name="partner" value="{{ partner }}"></p>
+            <p>Конечник:<input type="text" name="consumer" value="{{ consumer }}"></p>
             <p class="right"><input type="submit" value="Искать"></p>
             <div class="clear"></div>
         </form>
