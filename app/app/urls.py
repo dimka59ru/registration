@@ -17,6 +17,7 @@ urlpatterns = [
 
 
 
+
     # url(r'^add/$', views.AddView.as_view(), name='add'),
     # url(r'^get_name/$', views.get_name, name='get_name'),
     # url(r'^(?P<pk>[0-9]+)/$', views.DetailView.as_view(), name='detail'),

@@ -5,6 +5,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;  charset=utf-8">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+
     <title>Регистрация проектов</title>
 
 </head>
@@ -13,45 +16,78 @@
 
 
 <div class="wrapper">
-    <a href="{% url 'app:index' %}" >&larr; На главную</a>
+    <a href="{% url 'app:index' %}">&larr; На главную</a>
     {% if messages %}
     <ul class="flash">
-    {% for message in messages %}
-        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
             {{ message }}
         </li>
         {% endfor %}
     </ul>
     {% endif %}
-    <form action="" method="post" class="add_project" enctype="multipart/form-data" >
+
+
+    <form action="" method="post" class="add_project" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="left">{{ form.as_p }}</div>
-
+        <div class="left">{{ project_form.as_p }}</div>
         <div class="right">
-            {% if device_list %}
-
+            {{ device_formset.management_form }}
             <table class="devices">
                 <tr>
-                    <th width="80px">Выбрать</th>
+
                     <th>Изделие</th>
-                    <th width="80px">Количество</th>
+                    <th>Количество</th>
                 </tr>
-                {% for device in device_list %}
-                <tr class="hover">
-                    <td align="center">
-                        <input type="checkbox" name="checkbox" value="{{ device.device_name }}"/></td>
-                    <td style="">{{ device.device_name }}</td>
-                    <td align="center">
-                        <input type="number" size="1" name="{{ device.device_name }}_sum"/></td>
+                {% for device_form in device_formset %}
+
+                <tr class="link-formset">
+                    <td>
+                        {{ device_form.deivce }}
+                        {% if device_form.deivce.errors %}
+                        {% for error in device_form.deivce.errors %}
+                        <span class="error">{{ error|escape }}</span>
+                        {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ device_form.sum }}
+                        {% if device_form.sum.errors %}
+                        {% for error in device_form.sum.errors %}
+                        <span class="error">{{ error|escape }}</span>
+                        {% endfor %}
+                        {% endif %}
+
+
+                    </td>
+
                 </tr>
                 {% endfor %}
             </table>
 
+            {% if device_formset.non_form_errors %}
+            {% for error in device_formset.non_form_errors %}
+            {{ error|escape }}
+            {% endfor %}
             {% endif %}
 
-            <input type="submit" value="Отправить"/>
+            <p><input type="submit" value="Отправить"/></p>
         </div>
+
+
     </form>
+    <!-- Include formset plugin - including jQuery dependency -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="{% static 'js/jquery.formset.js' %}"></script>
+    <script>
+    $('.link-formset').formset({
+        addText: 'Добавить',
+        deleteText: 'удалить'
+    });
+
+
+    </script>
+
 </div>
 </body>
 </html>

@@ -185,10 +185,14 @@ border-top: 1px solid #AACBE2;
 .flash          { background: #cee5F5; padding: 0.5em 30px; border: 1px solid #aacbe2; margin-bottom:10px}
 
 
-.error          { background: #f0d6d6; padding: 0.5em; margin-bottom: 10px; border: 1px solid #c0abab;}
+/*.error          { background: #f0d6d6; padding: 0.5em; margin-bottom: 10px; border: 1px solid #c0abab;}
 
-.error li {margin-left:20px;}
+.error li {margin-left:20px;}*/
 
+.error {
+    color: red;
+    font-size:10px;
+}
 ul {margin:0}
 .space {margin: 10px 0}
 
@@ -232,6 +236,8 @@ ul {margin:0}
 .gray {
     background:#CCC;
 }
+
+
 
 tr.red td {
     background:#FF9999;

@@ -2,22 +2,20 @@
 from datetime import date
 from django.contrib import messages
 from django.db.models import Count
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.views import generic
-from django.views.generic import TemplateView
-
-# from project_registration_django import settings
 from django.conf import settings
 from .models import Project, Devices, ListDevices, get_date_end
 from .forms import ProjectForm
+from django.forms.formsets import formset_factory
+from django.shortcuts import render
+from .forms import DeviceForm, BaseLinkFormSet
 
 NOT_ACTUAL = 1  # Неактуальный
 IMPLEMENTED = 2  # Реализованный
 ACTUAL = 3  # Актуальный
 OUTDATED = 4  # Устаревший
+
+add_device_list = []
 
 
 def count_project():
@@ -52,43 +50,34 @@ def filter_status(request, status):
 
 
 def add(request):
-    flag_error = False
     device_list = Devices.objects.order_by('device_name')
-    # if this is a POST request we need to process the form data
+
+    DeviceFormSet = formset_factory(DeviceForm, formset=BaseLinkFormSet)
+
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = ProjectForm(request.POST, request.FILES)
+        project_form = ProjectForm(request.POST, request.FILES)
+        device_formset = DeviceFormSet(request.POST)
 
-        devices_list_from_form = request.POST.getlist('checkbox')
-        if not devices_list_from_form:
-            messages.add_message(request, settings.MY_SUPER_ERROR, 'Не выбрано оборудование!')
-            flag_error = True
-        else:
-            for device in devices_list_from_form:
-                if not request.POST.get('{}_sum'.format(device)):
-                    messages.add_message(request, settings.MY_SUPER_ERROR,
-                                         'Не указано количество оборудования {}.'.format(device))
-                    flag_error = True
+        if project_form.is_valid() and device_formset.is_valid():
 
-        # check whether it's valid:
-        if form.is_valid() and not flag_error:
-            new_project = form.save()
+            new_project = project_form.save()
 
-            for device in devices_list_from_form:
-                entry = ListDevices(device_name=device, sum=request.POST.get('{}_sum'.format(device)),
-                                    id_project=new_project)
+            for device_form in device_formset:
+                device = device_form.cleaned_data['deivce']
+                sum = device_form.cleaned_data.get('sum')
+
+                entry = ListDevices(device_name=device, sum=sum, id_project=new_project)
                 entry.save()
 
             messages.add_message(request, settings.MY_SUPER_ERROR, 'Успешно добавлен!')
             return HttpResponseRedirect('/')
-        else:
-            return render(request, 'app/add.html', {'form': form, 'device_list': device_list})
 
-    # if a GET (or any other method) we'll create a blank form
     else:
-        form = ProjectForm()
+        project_form = ProjectForm()
+        device_formset = DeviceFormSet()
 
-    return render(request, 'app/add.html', {'form': form, 'device_list': device_list})
+    return render(request, 'app/add.html',
+                  {'project_form': project_form, 'device_list': device_list, 'device_formset': device_formset})
 
 
 def edit(request, project_id):
