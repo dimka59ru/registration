@@ -50,8 +50,6 @@ def filter_status(request, status):
 
 
 def add(request):
-    device_list = Devices.objects.order_by('device_name')
-
     DeviceFormSet = formset_factory(DeviceForm, formset=BaseLinkFormSet)
 
     if request.method == 'POST':
@@ -77,7 +75,7 @@ def add(request):
         device_formset = DeviceFormSet()
 
     return render(request, 'app/add.html',
-                  {'project_form': project_form, 'device_list': device_list, 'device_formset': device_formset})
+                  {'project_form': project_form, 'device_formset': device_formset})
 
 
 def edit(request, project_id):
