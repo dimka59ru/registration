@@ -30,7 +30,7 @@
 
     <form action="" method="post" class="add_project" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="left">{{ project_form.as_p }}</div>
+        <div class="left"><table class="form-group">{{ project_form.as_table }}</table></div>
         <div class="right">
             {{ device_formset.management_form }}
             <table class="devices">

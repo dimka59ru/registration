@@ -26,22 +26,35 @@
         {% if project %}
         <form action="" method="post" class="add_project">
         {% csrf_token %}
-            <div class="left">
-                <dl>
-                    <dt>E-mail:
-                    <dd><input type=email size=30 name=email value="{{ project.email }}" required>
-                    <dt>Контакты:
-                    <dd><textarea name=contacts rows=5 cols=52>{{ project.contacts }}</textarea>
+            <div class="left ">
+                <table class="form-group">
+                <tr>
+                    <th><label>E-mail:</label></th>
+                    <td><input type=email size=30 name=email value="{{ project.email }}" required></td>
+                </tr>
+                <tr>
+                    <th><label>Контакты:</label></th>
+                    <td><textarea name=contacts rows=5 cols=52>{{ project.contacts }}</textarea></td>
+                </tr>
+                <tr>
+                    <th><label>Примечание:</label></th>
+                    <td><textarea name=note rows=5 cols=52>{{ project.note }}</textarea></td>
+                </tr>
 
-                    <dt>Примечание:
-                    <dd><textarea name=note rows=5 cols=52>{{ project.note }}</textarea>
-                </dl>
 
+
+
+
+
+
+
+
+            </table>
             </div>
 
             <div class="right">
+                <p style="text-align:left;"><b>Статус:</b></p>
     <div class="legend">
-        <p><b>Статус:</b></p>
         <p><input name="status" type="radio" value="" checked></p>
         <p><input name="status" type="radio" value="3" >Актуальный</p>
         <p><input name="status" type="radio" value="4">Продлить</p>
