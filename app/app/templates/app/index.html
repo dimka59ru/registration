@@ -22,15 +22,18 @@
         </ul>
         {% endif %}
 
-        {% if project_list %}
+
+
+
+        {% if projects %}
         <table class="projects">
             <tr>
-                <th>Номер</th>
+                <th><a href="/sort_by_id/">№</a></th>
 
                 <th>Добавлен</th>
-                <th>Окончание</th>
-                <th>Срок реализации</th>
-                <th>Контрагент</th>
+                <!--<th>Окончание</th>-->
+
+                <th><a href="/sort_by_partner/">Контрагент</a></th>
                 <th>Конечный заказчик</th>
                 <th>E-mail</th>
                 <th>Контакты</th>
@@ -41,41 +44,51 @@
                     <div class="clear"></div>
                 </th>
                 <th>Файл</th>
+                <!--<th>Срок реализации</th>-->
                 <th>Примечание</th>
             </tr>
-            {% for project in project_list %}
+            {% for project in projects %}
             <tr class="
                     {% if project.status == 3 %}yellow
                     {% elif project.status == 2 %}green
                     {% elif project.status == 1 %}gray
                     {% elif project.status == 4 %}red
                     {% endif %} hover">
-                <td style="text-align:center"><a href="{% url 'app:edit' project.id %}">{{ project.id }}</a></td>
-                <td style="text-align:center">{{ project.add_date|date:"d.m.Y" }}</td>
-                <td style="text-align:center">{{ project.end_date|date:"d.m.Y" }}</td>
-                <td>{{ project.realization }}</td>
-                <td>{{ project.partner }}</td>
-                <td>{{ project.end_customer }}</td>
-                <td><a href="mailto:{{ project.email }}">{{ project.email }}</a></td>
-                <td>{{ project.contacts }}</td>
-                <td>
-                    {% if device_list %}
-                    {% for device in device_list %}
+                <td style="text-align:center">
+                    <a href="{% url 'app:edit' project.id %}">{{project.id}}</a></td>
+                <td style="text-align:center"><p>{{ project.add_date|date:"d.m.Y" }}</p>
+                    <p>{{ project.end_date|date:"d.m.Y" }}</p></td>
+                <!--<td style="text-align:center">{{ project.end_date|date:"d.m.Y" }}</td>-->
 
-                    {% if device.id_project.id == project.id %}
+                <td>{{project.partner}}</td>
+                <td>{{project.end_customer}}</td>
+                <td><a href="mailto:{{ project.email }}">{{project.email}}</a></td>
+                <td>
+                    <p>{{ project.contacts }}</p>
+                </td>
+                <td>
+                    {% for device in project.listdevices_set.all %}
+
+
                     <div class="border_bottom">
-                        <p class="left">{{ device.device_name }}</p>
-                        <p class="right">{{ device.sum }}</p>
+                        <p class="left">{{device.device_name}}</p>
+                        <p class="right">{{device.sum}}</p>
                         <div class="clear"></div>
                     </div>
 
-                    {% endif %}
+
                     {% endfor %}
-                    {% endif %}
+
 
                 </td>
                 <td><a href="{% get_media_prefix %}{{ project.file }}" target="_blank">Скачать</a></td>
-                <td>{{ project.note }}</td>
+                <!--<td>{{ project.realization }}</td>-->
+                <td>
+                    <p style="margin-bottom:15px">{{ project.note }}</p>
+
+                    <p>Срок реализации:</p>
+                    <p>{{ project.realization }}</p>
+                </td>
             </tr>
 
 
@@ -85,11 +98,14 @@
         {% else %}
         <p class="flash">Нет проектов :(</p>
         {% endif %}
+
+
     </div>
 </main>
 <nav id="nav">
     <div class="innertube">
         <p><a href="{% url 'app:add' %}">Добавить проект</a></p>
+        <p><a href="{% url 'app:add_device' %}">Добавить оборудование</a></p>
 
         <table class="sort">
             <tr class="yellow">

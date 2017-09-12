@@ -9,9 +9,12 @@ from . import views
 app_name = 'app'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^sort_by_id/$', views.sort_by_id, name='sort_by_id'),
+    url(r'^sort_by_partner/$', views.sort_by_partner, name='sort_by_partner'),
     url(r'^(?P<status>[0-9]+)/$', views.filter_status, name='filter_status'),
     url(r'^edit/(?P<project_id>[0-9]+)/$', views.edit, name='edit'),
     url(r'^add/$', views.add, name='add'),
+    url(r'^add_device/$', views.add_device, name='add_device'),
     url(r'^search/$', views.search, name='search'),
     url(r'^report/$', views.report, name='report'),
 

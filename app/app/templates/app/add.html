@@ -6,9 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html;  charset=utf-8">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-
-
-    <title>Регистрация проектов</title>
+    <title>Добавить проект</title>
 
 </head>
 
@@ -43,9 +41,9 @@
 
                 <tr class="link-formset">
                     <td>
-                        {{ device_form.deivce }}
-                        {% if device_form.deivce.errors %}
-                        {% for error in device_form.deivce.errors %}
+                        {{ device_form.device }}
+                        {% if device_form.device.errors %}
+                        {% for error in device_form.device.errors %}
                         <span class="error">{{ error|escape }}</span>
                         {% endfor %}
                         {% endif %}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!-- Template by quackit.com -->
+{% load static %}
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;  charset=utf-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+
+
+    <title>Добавить устройство</title>
+
+</head>
+
+<body>
+
+
+<div class="wrapper">
+    <a href="{% url 'app:index' %}">&larr; На главную</a>
+    {% if messages %}
+    <ul class="flash">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>
+            {{ message }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div id="add_device">
+        <div class="left">
+           <form action="" method="post">
+                {% csrf_token %}
+                <table class="form-group">{{ form.as_table }}</table>
+                <p><input type="submit" value="Отправить"/></p>
+             </form>
+        </div>
+
+        <div class="right">
+            {% if device_list %}
+                {% for device in device_list %}
+                    <p>{{device.device_name}}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div style="clear:both"></div>
+    </div>
+
+
+</div>
+</body>
+</html>

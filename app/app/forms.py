@@ -21,11 +21,20 @@ class ProjectForm(ModelForm):
 
 
 class DeviceForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(DeviceForm, self).__init__(*args, **kwargs)
+        devices = Devices.objects.order_by('device_name')
+        self.fields['device'] = forms.ChoiceField(
+            choices=((x.device_name, x.device_name) for x in devices))
 
-    device_list = Devices.objects.order_by('device_name')
-    deivce = forms.ChoiceField(choices=((x.device_name, x.device_name) for x in device_list))
     sum = forms.IntegerField()
 
+
+class AddDeviceForm(ModelForm):
+    class Meta:
+        model = Devices
+        fields = ('device_name',)
+        labels = {'device_name': _('Название')}
 
 
 class BaseLinkFormSet(BaseFormSet):
@@ -37,20 +46,20 @@ class BaseLinkFormSet(BaseFormSet):
         if any(self.errors):
             return
 
-        deivces = []
+        devices = []
         sums = []
         duplicates = False
 
         for form in self.forms:
             if form.cleaned_data:
-                deivce = form.cleaned_data['deivce']
+                device = form.cleaned_data['device']
                 sum = form.cleaned_data['sum']
 
                 # Check that no two links have the same anchor or URL
-                if deivce and sum:
-                    # if deivce in deivces:
+                if device and sum:
+                    # if deivce in deivces:1
                     #     duplicates = True
-                    deivces.append(deivce)
+                    devices.append(device)
 
                     # if sum in sums:
                     #     duplicates = True
@@ -63,12 +72,12 @@ class BaseLinkFormSet(BaseFormSet):
                     )
 
                 # Check that all links have both an anchor and URL
-                if sum and not deivce:
+                if sum and not device:
                     raise forms.ValidationError(
                         'All links must have an anchor.',
                         code='missing_anchor'
                     )
-                elif deivce and not sum:
+                elif device and not sum:
                     raise forms.ValidationError(
                         'All links must have a URL.',
                         code='missing_URL'

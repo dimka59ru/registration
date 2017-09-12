@@ -54,6 +54,9 @@ class Project(models.Model):
         self.file.delete(save=False)
         super(Project, self).delete(*args, **kwargs)
 
+    # def __repr__(self):
+    #     return str(self)
+
 
 class Devices(models.Model):
     device_name = models.CharField(max_length=300)
@@ -63,6 +66,9 @@ class ListDevices(models.Model):
     device_name = models.CharField(max_length=300)
     sum = models.IntegerField(default=0)
     id_project = models.ForeignKey(Project, on_delete=models.CASCADE)
+
+    def __repr__(self):
+        return "name: {}, id_project: {}, sum: {}\n".format(self.device_name, self.id_project.id, self.sum)
 
 
 
