@@ -1,22 +1,20 @@
 import os
-from datetime import date
+# from datetime import date
+import datetime
 from uuid import uuid4
 from django.utils.deconstruct import deconstructible
 
 from django.db import models
 
 
-
-
 def get_date_end():
-    new_year = date.today().year
-    new_month = date.today().month + 3
-
-    if new_month > 12:
-        new_year += 1
-        new_month -= 12
-
-    return date(new_year, new_month, date.today().day)
+    # new_year = datetime.date.today().year
+    # new_month = datetime.date.today().month + 3
+    # if new_month > 12:
+    #     new_year += 1
+    #     new_month -= 12
+    new_date = datetime.date.today() + datetime.timedelta(days=91)
+    return datetime.date(new_date.year, new_date.month, new_date.day)
 
 
 @deconstructible
