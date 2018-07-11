@@ -1,6 +1,6 @@
+import calendar
 import os
-# from datetime import date
-import datetime
+from datetime import date
 from uuid import uuid4
 from django.utils.deconstruct import deconstructible
 
@@ -8,13 +8,17 @@ from django.db import models
 
 
 def get_date_end():
-    # new_year = datetime.date.today().year
-    # new_month = datetime.date.today().month + 3
-    # if new_month > 12:
-    #     new_year += 1
-    #     new_month -= 12
-    new_date = datetime.date.today() + datetime.timedelta(days=91)
-    return datetime.date(new_date.year, new_date.month, new_date.day)
+    # возвращает новую дату. + 3 месяца к дате создания проекта. дата окончания проекта.
+    #  new_date = datetime.date.today() + datetime.timedelta(days=91)  # рабочий вариант, не удалять
+    #  return datetime.date(new_date.year, new_date.month, new_date.day)
+
+    today = date.today()
+    month = today.month - 1 + 3  # прибавляем 3 месяца
+    year = int(today.year + month / 12)
+    month = month % 12 + 1
+    day = min(today.day, calendar.monthrange(year, month)[1])
+
+    return date(year, month, day)
 
 
 @deconstructible
@@ -30,6 +34,7 @@ class PathAndRename(object):
         # return the whole path to the file        
         return os.path.join(self.path, filename)
 
+
 path_and_rename = PathAndRename("doc/")
 
 
@@ -43,7 +48,8 @@ class Project(models.Model):
     email = models.EmailField()
     contacts = models.TextField()
     file = models.FileField(upload_to=path_and_rename)
-    note = models.CharField(max_length=300, blank=True)
+    # note = models.CharField(max_length=300, blank=True)
+    note = models.TextField(max_length=300, blank=True)
 
     class Meta:
         ordering = ['status', 'id']
@@ -67,8 +73,3 @@ class ListDevices(models.Model):
 
     def __repr__(self):
         return "name: {}, id_project: {}, sum: {}\n".format(self.device_name, self.id_project.id, self.sum)
-
-
-
-
-

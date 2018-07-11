@@ -9,6 +9,8 @@ from .forms import ProjectForm
 from django.forms.formsets import formset_factory
 from django.shortcuts import render
 from .forms import DeviceForm, BaseLinkFormSet, AddDeviceForm
+from .functions import send_email
+
 
 NOT_ACTUAL = 1  # Неактуальный
 IMPLEMENTED = 2  # Реализованный
@@ -30,15 +32,23 @@ def count_project():
 def index(request):
     projects = Project.objects.order_by('-status', '-end_date', '-id').filter(status__gte=3)
     # projects = []
-
+    errors = ""
     for project in projects:
         # Перевод в неактуальные, если дата прошла
         if (date.today() > project.end_date) and (project.status == ACTUAL):
             project.status = OUTDATED
+            errors = send_email(project.id, project.add_date, project.email, project.file)  # Отправляем email клиенту
+            if not errors:
+                project.note += "\nПисьмо-напоминание отправлено {}".format(date.today())
             project.save()
+            messages.add_message(request, settings.MY_SUPER_ERROR, errors)
+
             messages.add_message(request, settings.MY_SUPER_ERROR, 'Проект {} истек '.format(project.id))
 
+
+
     context = {'stat': count_project(), 'projects': projects}
+
     return render(request, 'app/index.html', context)
 
 
@@ -156,7 +166,7 @@ def search(request):
 
     if ('gt' in request.GET and request.GET['gt']) and ('lt' in request.GET and not request.GET['lt']):
         gt = request.GET['gt']
-        projects = projects .filter(
+        projects = projects.filter(
             listdevices__sum__gte=int(gt)).annotate(Count("pk"))
 
     elif ('lt' in request.GET and request.GET['lt']) and ('gt' in request.GET and not request.GET['gt']):
