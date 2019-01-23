@@ -49,7 +49,7 @@ class Project(models.Model):
     contacts = models.TextField()
     file = models.FileField(upload_to=path_and_rename)
     # note = models.CharField(max_length=300, blank=True)
-    note = models.TextField(max_length=300, blank=True)
+    note = models.TextField(max_length=3000, blank=True)
 
     class Meta:
         ordering = ['status', 'id']
